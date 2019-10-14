@@ -1,4 +1,4 @@
-const { useState, useEffect, render } = require('./lib')
+const { useState, useEffect, render } = require('../src')
 
 // 自定义 hooks
 // 该 hooks 接受初始 state 为一个 url 字符串, 返回的 state 为一个数组, 带有解析的 url 元素
@@ -52,7 +52,6 @@ const MyApp = () => {
 }
 
 let App = render(MyApp)
-
 // click() 由于设置的是常量, 重复设置了两次, 相当于只设置了一次
 // clickCallback() 接受的是 callback, 可以正确拿到上次的 state, 再上次基础上计算
 // 最后 count 的值为 3
@@ -65,7 +64,7 @@ App = render(MyApp)
 App.type('bar')
 App = render(MyApp)
 
-// 这里不会 run effect, 由于 dep array 没有任何变化
+// // 这里不会 run effect, 由于 dep array 没有任何变化
 App.keep()
 App = render(MyApp)
 

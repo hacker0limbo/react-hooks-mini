@@ -2,13 +2,16 @@ const assert = require('assert')
 
 const React = (() => {
   // hooks 里面保存了 useState, useEffect 里面的状态以及依赖数组
-  // 例如可能为 [count, [count]] 
+  // 例如可能为 [count, [count, otherstates]] 
   const hooks = []
   // 当前 hooks, 用于定位到 state 或者 useEffect 里的 dependency array
   // 每次 render 之后都会被清零
   let currentHookIndex = 0
 
   const useState = initialValue => {
+    // 由于 render 会多次调用, 当第一次初始化 App 的时候, 这时候 hooks 里还没有任何数据
+    // 所以 state 使用的是 initialValue, 作为最初的 stae
+    // 后面进行了计算以后, hooks 里面存了对应的数据了, 是所有 hooks 里面的数据
     const state = hooks[currentHookIndex] || initialValue
     // 增加一个临时变量, 为 setState 闭包做准备, 使其可以正确读取到对应的 currentHookIndex
     // 否则由于每次 render 以后, currentHookIndex 被清零, setState 永远只能修改第一个 state
@@ -19,7 +22,7 @@ const React = (() => {
     const setState = newState => {
       // newState 可以是一个函数, 也可以是一个常量
       if (typeof(newState) === 'function') {
-        // 在常量的情况下, 需要根据上次的 state 进行计算
+        // 在 newState 是一个回调函数的情况下, 需要根据上次的 state 进行计算
         if (hooks[_currentHookIndex]) {
           hooks[_currentHookIndex] = newState(hooks[_currentHookIndex])
         } else {
@@ -27,7 +30,7 @@ const React = (() => {
           hooks[_currentHookIndex] = newState(initialValue)
         }
       } else {
-        // 如果 newState 是一个常量, 直接设置
+        // 如果 newState 是一个常量, 直接设置值
         hooks[_currentHookIndex] = newState
       }
     }
@@ -37,15 +40,20 @@ const React = (() => {
   }
 
   const useEffect = (callback, depArray) => {
+    // useEffect 在 depArray 里面的任一一个元素发生改变之后调用 callback
+    // 注意和 render 的区别, 即使有时候 render 了, 但是 depArray 里面元素并没有发生变化
+    // 那么也不会调用 callback
     const hasNoDeps = !depArray
     const oldDeps = hooks[currentHookIndex]
     let hasChangedDeps = true
     if (oldDeps) {
       // 使用 node 的 deepEqual 或者 _.equals 来深度比较 dependency array 是否发生了变化
       try {
+        // 无错误被捕获, 说明无改变
         assert.deepEqual(oldDeps, depArray)
         hasChangedDeps = false
       } catch (error) {
+        // 发生错误被捕获, 说明 depArray 改变了
         hasChangedDeps = true
       }
       // hasChangedDeps = depArray.some((dep, i) => !Object.is(dep, oldDeps[i]))

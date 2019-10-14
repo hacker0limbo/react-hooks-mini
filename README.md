@@ -5,26 +5,54 @@
 - `useEffect`
 - `useRef`
 
-示例代码查看 [example.js](/example.js)
+## 文件结构
+```
+src/
+  index.js    ------ 源码
+examples/
+  index.js    ------ 示例 1
+  Counter.js  ------ 示例 2
+index.js/     ------ 入口文件
+```
 
 ## 使用方法
 
-```javascript
-// 引入 hooks, render 方法在每一次 state 改变之后手动调用
-const { useState, useEffect, render } = require('./lib')
+更多用法参考 [examples目录](/examples/index.js)
 
+### 基本使用
+
+```javascript
 const MyApp = () => {
-  // 自己设置一些 state 和 method, 可以参考 example.js 
+  const [count, setCount] = useState(0)
+  const [text, setText] = useState('foo')
+
+  useEffect(() => {
+    console.log('effect', count, text)
+  }, [count, text])
+
+  const click = () => {
+    setCount(count+1)
+  }
+
+  const type = newText => {
+    setText(newText)
+  }
+
+  const render = () => {
+    console.log('render', { count, text })
+  }
+
+  return {
+    click,
+    type,
+    render
+  }
 }
 
-// 初次 render MyApp
 let App = render(MyApp)
-
-App.method1()
-// 手动重新 render
+App.click()
 App = render(MyApp)
 
-App.method2()
-// 手动重新 render
+App.type('bar')
 App = render(MyApp)
 ```
