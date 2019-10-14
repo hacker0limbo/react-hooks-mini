@@ -21,7 +21,13 @@ index.js/     ------ 入口文件
 
 ### 基本使用
 
+```
+npm install react-hooks-mini
+```
+
 ```javascript
+const { useState, useEffect } = require('react-hooks-mini')
+
 const MyApp = () => {
   const [count, setCount] = useState(0)
   const [text, setText] = useState('foo')
