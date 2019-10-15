@@ -12,7 +12,7 @@ src/
 examples/
   index.js    ------ 示例 1
   Counter.js  ------ 示例 2
-index.js/     ------ 入口文件
+index.js      ------ 入口文件
 ```
 
 ## 使用方法
@@ -26,7 +26,7 @@ npm install react-hooks-mini
 ```
 
 ```javascript
-const { useState, useEffect } = require('react-hooks-mini')
+const { useState, useEffect, render } = require('react-hooks-mini')
 
 const MyApp = () => {
   const [count, setCount] = useState(0)
